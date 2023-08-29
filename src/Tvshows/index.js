@@ -33,9 +33,11 @@ function Tvshows() {
                                           <Badge color="green">
                                               {tvshow.creator}
                                           </Badge>
-                                          <Badge color="yellow">
-                                              {tvshow.genre}
-                                          </Badge>
+                                          {tvshow.genre.map((genre) => (
+                                              <Badge color="yellow" key={genre}>
+                                                  {genre}
+                                              </Badge>
+                                          ))}
                                           <Badge color="red">
                                               {tvshow.rating}
                                           </Badge>
