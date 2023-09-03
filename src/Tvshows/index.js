@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Title, Grid, Card, Badge, Group, Space, Button } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 
 function Tvshows() {
+    const navigate = useNavigate();
     const [tvshows, setTvshows] = useState([]);
 
     useEffect(() => {
@@ -27,11 +30,37 @@ function Tvshows() {
         }
     };
 
+    const handleTvshowDelete = async (tvshow_id) => {
+        try {
+            await axios({
+                method: "DELETE",
+                url: "http://localhost:5000/tvshows/" + tvshow_id,
+            });
+            notifications.show({
+                title: "Tvshow Deleted",
+                color: "green",
+            });
+            const newTvshows = tvshows.filter((m) => m._id !== tvshow_id);
+            setTvshows(newTvshows);
+        } catch (error) {
+            notifications.show({
+                title: error.response.data.message,
+                color: "red",
+            });
+        }
+    };
+
     return (
         <>
-            <Title order={3} align="center">
-                Tvshows
-            </Title>
+            <Group position="apart">
+                <Title order={3} align="center">
+                    Tvshows
+                </Title>
+                <Button component={Link} to="/tvshow_add" color="green">
+                    Add New
+                </Button>
+            </Group>
+
             <Space h="20px" />
             <Group>
                 <Button
@@ -147,6 +176,30 @@ function Tvshows() {
                                           <Badge color="red">
                                               {tvshow.rating}
                                           </Badge>
+                                      </Group>
+                                      <Space h="20px" />
+                                      <Group position="apart">
+                                          <Button
+                                              component={Link}
+                                              to={"/tvshows/" + tvshow._id}
+                                              color="blue"
+                                              size="xs"
+                                              radius="50px"
+                                          >
+                                              Edit
+                                          </Button>
+                                          <Button
+                                              color="red"
+                                              size="xs"
+                                              radius="50px"
+                                              onClick={() => {
+                                                  handleTvshowDelete(
+                                                      tvshow._id
+                                                  );
+                                              }}
+                                          >
+                                              Delete
+                                          </Button>
                                       </Group>
                                   </Card>
                               </Grid.Col>
